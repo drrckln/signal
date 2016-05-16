@@ -40,7 +40,7 @@ control = trainControl(method="repeatedcv", repeats=1, verboseIter=TRUE, search=
 # scaling all 0s can result in NaN
 caret_fit = train(x=dtm, y=factored_outcomes, method="glmnet", metric = "ROC",
                   tuneGrid=param_grid, trControl=control)
-best_a = caret_fit$bestTune[[1]]
-best_l = caret_fit$bestTune[[2]]
+best_a = caret_fit$bestTune[[1]] # 0.1
+best_l = caret_fit$bestTune[[2]] # 0.0459
 # this one wants non-factored
 fitted = glmnet(x=dtm, y=outcomes, alpha=best_a, lambda=best_l)
