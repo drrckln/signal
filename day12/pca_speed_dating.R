@@ -76,7 +76,9 @@ auc(roc(gender, step_model$fitted.values))
 
 # regularized linear regression
 reg_model = glmnet(p$x, gender[[1]], family="binomial")
-auc(roc(gender[[1]], predict(reg_model, p$x))) # AUGH SCREW IT
+cv_model = cv.glmnet(p$x, gender[[1]], family="binomial")
+auc(roc(gender[[1]], predict(reg_model, p$x, s=cv_model$lambda.min)[,1])) # 0.825
+
 
 # Predict race (whites and asians only)
 # that's races 2 and 4
@@ -98,6 +100,9 @@ aucs = unlist(lapply(races_fits, function(x) { auc(roc(x$data$race, x$fitted.val
 step_model = step(fit, race ~ .)
 auc(roc(step_model$data$race, step_model$fitted.values)) #0.678
 
+reg_model = glmnet(p$x[selector,], race, family="binomial")
+cv_model = cv.glmnet(p$x[selector,], race, family="binomial")
+auc(roc(race, predict(reg_model, p$x[selector,], s=cv_model$lambda.min)[,1])) # 0.683
 
 
 # Predict career code, restricting to academia and business/finance
@@ -120,3 +125,7 @@ aucs = unlist(lapply(career_fits, function(x) { auc(roc(x$data$career, x$fitted.
 
 step_model = step(fit, career ~ .)
 auc(roc(step_model$data$career, step_model$fitted.values)) #0.75
+
+reg_model = glmnet(p$x[selector,], career, family="binomial")
+cv_model = cv.glmnet(p$x[selector,], career, family="binomial")
+auc(roc(career, predict(reg_model, p$x[selector,], s=cv_model$lambda.min)[,1])) # 0.741
