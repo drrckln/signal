@@ -19,6 +19,7 @@ for (i in seq(nrow(df))) {
   }
 }
 
+df = df %>% select(-Extraversion, Neuroticism)
 ndf = df[nonNArows,]
 extraversion = msq$Extraversion[nonNArows]
 neuroticism = msq$Neuroticism[nonNArows]
@@ -33,7 +34,7 @@ top = function(n, p) {
 }
 
 # look at the first PCA loadings for the first 5-10 principal components
-for (i in seq(10)) {
+for (i in seq(5)) {
   print(top(i, p))
 }
 # PC1 : expressive
@@ -87,3 +88,18 @@ plot(ext_rmses$n, ext_rmses$rmse)
 
 # It definitely seems that 4 and 7 principal components capture the most
 # min RMSE for regularized linear regression was 3.91, mean was 3.98
+
+# Ahhh, forgot to remove Extraversion and Neuroticism. Did so.
+# Now maybe PC1 and PC2 will correspond? Extraversion showed up in PC4 before
+# PC2 seems to be Neuroticism, or maybe -PC3
+# PC1.. does not exactly seem like Extraversion
+
+# but the rmses are worse now
+#   n rmse
+# 1 1 4.11
+# 2 2 4.15
+# 3 3 4.15
+# 4 4 4.10
+# 5 5 4.14
+# 6 6 4.14
+# 7 7 4.11
