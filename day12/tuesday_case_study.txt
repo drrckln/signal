@@ -1,0 +1,30 @@
+Hmm. One simple metric would be to calculate a like-to-comment ratio, or rather
+you would need to intersect likes to comments (by putting the owners of each
+into separate sets). Someone who likes something should simply like it; if they
+add a comment or simply comment without liking it's fairly high probablity that
+they'd like to express some other emotion/affect.
+
+Also short reactions in comments are a better proxy than paragraphs. You could
+also check for emoji. Union the two, instead of just using "comments." Checking
+for emoji and emoticon frequency could give you some idea of what reactions are
+a good idea to implement. (This is confounded because it turns out emoji are
+not in any real way standardized.) To be honest I would play prior scientist
+here and use the discovered universal emotions.
+
+
+
+Yeah, how to test it? The problem is that both sides need to be implementing
+this; I suppose you could simply deprecate and default to "like" for positive
+emoticons and nothing for others. Another solution would be to pick little
+subnetworks to test this out in -- friend groups, or closed/open groups in
+general. Then the feature would only work internally in the group.
+
+
+
+First is simply the usage rate of the feature vs simple likes. If it's quite a
+bit higher, then that's indicating value. Now, what about magnitude? You can
+take your previous metrics and see how they compare; is the new feature
+cannibalizing short reactions and emoji reactions?
+
+Also people like new features and will play with it, so you probably have to
+wait a month and then start tracking these.
