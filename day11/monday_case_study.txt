@@ -1,11 +1,3 @@
-4 years ago, Facebook was considering building a product around high schools.
-At the time, we had 30M (global) userids who had filled in a text field
-(no associated pages) with the supposed name of their current high school.
-
-Question: How much of this data is real? We'd like to get an approximation
-with only Facebook data, so no trying to put together a listing of public high
-schools.
-
 get all these people's median login location
 test to see how close these are
 what percentage of these listings have another person with same/similar
