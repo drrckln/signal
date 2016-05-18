@@ -1,0 +1,72 @@
+---
+title: "Factor_Analy"
+author: "Roko Mijic"
+date: "17 May 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+set.seed(1) 
+X = rnorm(100)
+
+mean(X)
+
+Y = rnorm(100)
+Z = rnorm(100)
+
+factors = data.frame(X,Y,Z)
+
+```
+
+
+A function can be written which creates noisy indicators for vectors:
+
+
+```{r}
+noisyIndicators = function(feature, k, correlation)
+{
+  ls = vector(mode = "list", length = k)
+  for(i in c(1:k))
+  {
+    indicator = feature - rnorm(length(feature),mean = 0, sd = (1-correlation^2)^0.5  )
+    ls[[i]] = indicator
+  }
+  
+  df = data.frame(ls)
+  colnames(df) = c(1:k)
+  return(df)  
+}
+
+testvec = (c(1,2,3,4,5) - rep(mean(c(1,2,3,4,5))))/sd(c(1,2,3,4,5))
+testvec
+noisyIndicators( testvec,5,0.1)
+
+```
+
+Now we will create noisy indicators for our normal random variables X and Y
+
+```{r}
+p=0.9
+noisies = data.frame(noisyIndicators( X,4,p), noisyIndicators( Y,3,p))
+cor(noisies)
+corrplot(cor(noisies))
+
+```
+
+now run PCA on the noisies
+
+```{r}
+
+pr_noise = prcomp(noisies)
+#corrplot(cor(pr_noise$x, noisies))
+
+```
+
+
+
+
+
