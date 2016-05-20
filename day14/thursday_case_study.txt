@@ -1,0 +1,4 @@
+First, check DAU and MAU for the product. More specifically, you can track amount of content shared, # of fan posts accessed
+per day, and fan interaction. Fan interaction is a short term issue, so you can check how fan interaction with a post
+accretes over time.
+
