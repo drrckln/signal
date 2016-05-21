@@ -4,18 +4,23 @@ library(ggplot2)
 library(readr)
 setwd("~/repos/signal/")
 df = readRDS('parsed_data.rds')
-
-# Unfortunately, the importance scores and the answers they accept from potential matches are not immediately publicly available, so cannot
-# easily be gathered
+df = select(df, -starts_with("p_")) # remove OKC personality vars
 
 set.seed(1)
+load("factors")
 
 # Load question text
 qdata = read_delim('question_data.csv', ';')
 names(qdata)[1] = "id"
 
+# Make dataframe for vars
+df_ds = select(df, starts_with("d"))
+
 # Make dataframe with just questions
 df_qs = select(df, starts_with("q"))
+
+# Convenience function for calculating proportion of NAs
+prop_na = function(c, t=0.98) sum(is.na(c)) / length(c) > t
 
 # Remove particular columns
 # this cuts from 2620 questions to 1100.. damn
@@ -23,14 +28,17 @@ for (n in names(df_qs)) {
   if (length(unique(df_qs[[n]])) > 3) {
     # Filter for questions with binary responses
     df_qs[[n]] = NULL
-  } else if (sum(is.na(df_qs[[n]])) / length(df_qs[[n]]) > 0.98) {
+  } else if (prop_na(df_qs[[n]])) {
     # Filter for questions with proportion of NAs > 0.98
     df_qs[[n]] = NULL
   }
 }
 
+sum(is.na(df_qs)) # 57730090
+
 # Coerce factors to numerics
-for (i in 1:length(df_qs)) {
+# WHY DOES THIS WORK??
+for (i in seq(df_qs)) {
   df_qs[[i]] = as.numeric(df_qs[[i]]) - 1
 }
 
@@ -40,9 +48,7 @@ df_qs_m = df_qs[df$gender == "Man", ]
 df_qs_f = df_qs[df$gender == "Woman", ]
 
 # Filter each one for proportion of NAs in column > 0.98
-# isn't this redundant?
-prop_na = function(c, t=0.98) sum(is.na(c)) / length(c) > t
-sd_zero = function(c) sd(c, na.rm=TRUE) < 0.01 #???
+# isn't this redundant? ahh no, because it's within male or female
 names_rm = union(names(df_qs_m)[sapply(df_qs_m, prop_na)], names(df_qs_f)[sapply(df_qs_f, prop_na)])
 df_qs_all = select(df_qs_all, -one_of(names_rm))
 df_qs_m = select(df_qs_m, -one_of(names_rm))
@@ -54,6 +60,7 @@ c_male = cor(df_qs_m, use="pairwise.complete.obs")
 c_female = cor(df_qs_f, use="pairwise.complete.obs")
 
 # Look at which female correlations are NA
+# why would there be any? cause we cut into male and female, and possibly there are incomplete pairwise
 tmp_1 = (1:ncol(c_female))[sapply(as.data.frame(c_female), function(c) sum(is.na(c)) > 0)]
 tmp_2 = sapply(tmp_1, function(c) (1:nrow(c_female))[is.na(c_female[, c])])
 
@@ -73,7 +80,7 @@ qplot(1:80, eig_female$values[order(abs(eig_female$values), decreasing=TRUE)][1:
 # Factor analysis on correlation matrix
 n_fact_all = 16
 n_fact_male = 18
-n_fact_female = 9
+n_fact_female = 11 # was 9
 fa_cor_all = fa(c_all, n_fact_all, rotate="oblimin", fm="pa", covar=TRUE)
 fa_cor_male = fa(c_male, n_fact_male, rotate="oblimin", fm="pa", covar=TRUE)
 fa_cor_female = fa(c_female, n_fact_female, rotate="oblimin", fm="pa", covar=TRUE)
