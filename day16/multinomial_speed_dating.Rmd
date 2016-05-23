@@ -1,0 +1,75 @@
+---
+title: "Multinomial Logistic Regression on Speed Dating Data"
+author: "Roko Mijic"
+date: "23 May 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(zoo)
+library(dplyr)
+library(readr)
+library(corrplot)
+library(ggplot2)
+library(glmnet)
+
+```
+
+Read the data
+
+```{r}
+setwd('C:/Users/rmiji/OneDrive/R_working_dir/Signal')
+df = read.csv('./Week4/speeddating-aggregated.csv')
+head(df)
+
+```
+
+Find most common careers and select predictors, reorder dataframe:
+
+```{r}
+common_careers = as.numeric(names(sort(table(df$career_c),decreasing = TRUE)[1:4]))
+common_careers
+
+df = (dplyr::select(df, -gender, -race, -race_o, -dec_o))[,c(1:5,7:23,6)]
+head(df)
+```
+
+filter 
+
+
+```{r}
+
+df = dplyr::filter(df, career_c %in% common_careers)
+
+preds = scale(data.matrix(df[,1:ncol(df)-1]))
+
+target = data.matrix(df[,ncol(df)])
+
+multinom_model = glmnet(preds, target, family="multinomial", lambda = 0)
+
+coefmat = as.matrix(do.call(cbind, coef(multinom_model) ))[-1,]
+
+colnames(coefmat) = names(coef(multinom_model))
+colnames(coefmat) = c("Decepticon", "Academic", "Arty-farty", "Leech")
+
+corrplot(coefmat, is.corr = FALSE)
+
+predicted_log_odds = (predict(multinom_model, preds, s = 0  ))[,,1]
+
+predicted_log_odds
+
+str(predicted_log_odds)
+
+prc_obj = prcomp(predicted_log_odds)
+
+change_of_basis = prc_obj$rotation
+row.names(change_of_basis) = c("Decepticon", "Academic", "Arty-farty", "Leech")
+
+colnames(change_of_basis) = c("Poor", "Bad at math", "???", "meaningless")
+
+corrplot(change_of_basis)
+
+```
+
