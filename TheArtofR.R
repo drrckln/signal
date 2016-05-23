@@ -48,3 +48,9 @@ predb = function(x,k) {
 }
 
 # or.. use cumsum(), which is cumulative sum
+
+# RECYCLING
+# FILTERING
+# VECTORIZATION
+
+
