@@ -40,7 +40,6 @@ cols_mostly_NA = function(df, t=0.98) {
 # Main
 df = readRDS('parsed_data.rds')
 df = select(df, -starts_with("p_")) # remove OKC personality vars
-
 set.seed(1)
 load("factors")
 
@@ -105,13 +104,39 @@ fact_all = lapply(load_all, function(c) qdata$text[order(abs(c), decreasing=TRUE
 fact_larks = lapply(load_larks, function(c) qdata$text[order(abs(c), decreasing=TRUE)[1:n_qs]])
 fact_owls = lapply(load_owls, function(c) qdata$text[order(abs(c), decreasing=TRUE)[1:n_qs]])
 
+# matrix multiply so you have features, in the new basis (factors)
+# now you can make predictions
+all[is.na(all)] = 0
+features = data.matrix(all) %*% data.matrix(load_all)
+
 # need to impute, probably
-cvfit = cv.glmnet(as.matrix(all), all_q76[[1]], family = "binomial")
+cvfit = cv.glmnet(features, all_q76[[1]], family = "binomial")
 plot(cvfit)
 cvfit$lambda.min
 coef(cvfit, s = "lambda.min")
-fit = glmnet(as.matrix(all), all_q76[[1]], family = "binomial")
+fit = glmnet(features, all_q76[[1]], family = "binomial")
 
+
+#                        1
+# (Intercept)  0.435736007
+# PA1          0.052610915
+# PA16         0.012379111
+# PA6          0.001081535
+# PA14         0.018301472
+# PA5         -0.005480588
+# PA8         -0.117607654
+# PA2         -0.047489362
+# PA18        -0.142879556
+# PA13         0.109474533
+# PA3         -0.003722863
+# PA9          0.019382425
+# PA4         -0.034114169
+# PA17         0.035272036
+# PA10        -0.042522702
+# PA12        -0.101207005
+# PA15         0.010174854
+# PA7          0.020783351
+# PA11         0.015675309
 
 
 
