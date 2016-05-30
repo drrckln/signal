@@ -1,0 +1,252 @@
+File Manifest for ICPSR 36263
+
+Johnston, Lloyd D., Jerald G. Bachman, Patrick M. O'Malley, John E.
+Schulenberg, and Richard A. Miech. Monitoring the Future: A Continuing
+Study of American Youth (12th-Grade Survey), 2014. ICPSR36263-v2. Ann
+Arbor, MI: Inter-university Consortium for Political and Social Research
+[distributor], 2016-03-14. http://doi.org/10.3886/ICPSR36263.v2
+
+Details on the version history can be found below the file listings.
+
+
+Study-level Documentation
+
+    Filename                            Record  Record    Var.    Date        MD5
+                                        Length  Count     Count   Updated     Checksum
+
+    36263-related_literature.txt        -       -         -       2016-05-30  -
+
+    36263-manifest.txt                  -       -         -       2016-05-31  -
+
+    36263-User_guide.pdf                -       -         -       2015-10-26  c1251b14c255ec8c18630a27f4ac0e0b
+
+
+DS0001 Core Data
+
+    Filename                            Record  Record    Var.    Date        MD5
+                                        Length  Count     Count   Updated     Checksum
+
+    36263-0001-Codebook.pdf             -       -         -       2016-03-14  769b26bcf1372665d3d4f25bfd7dd54c
+
+    36263-0001-Data.dta                 -       13,015    169     2015-10-26  8facca698ed8ed36c2561c053e473c70
+
+    36263-0001-Data.rda                 -       13,015    169     2015-10-26  335c180a1aec6a417db160a5f49f2cce
+
+    36263-0001-Data.sav                 -       13,015    169     2015-10-26  c3699766245f348e2bf93bf89026782f
+
+    36263-0001-Data.stc                 -       13,015    169     2015-10-26  75e2882a5edc1a7e3fd286b9c2e9458a
+
+    36263-0001-Data.tsv                 -       13,015    169     2015-10-26  bcce73f746372cd5ffe37f7c2ee4a8e2
+
+    36263-0001-Data.txt                 355     13,015    169     2015-10-26  ef51236127d26776ab34fb477328df97
+
+    36263-0001-Setup.dct                -       -         -       2015-10-26  a2a779ab252b9ab35efdeb1fc14bc40a
+
+    36263-0001-Setup.do                 -       -         -       2015-10-26  bd621733e91ef4dceb5309e7b7282578
+
+    36263-0001-Setup.sas                -       -         -       2015-10-26  9d4ef21a3a783cfba29ce031b8c3951d
+
+    36263-0001-Setup.sps                -       -         -       2015-10-26  feea753c5b82cf33639c71d0689e1ccb
+
+    36263-0001-Supplemental_syntax.do   -       -         -       2015-10-26  efaedbbc6f2ea5cb2b5e944b2ab513be
+
+    36263-0001-Supplemental_syntax.sas  -       -         -       2015-10-26  96c752fe5edb9708221a342ffc09441a
+
+
+DS0002 Form 1 Data
+
+    Filename                            Record  Record    Var.    Date        MD5
+                                        Length  Count     Count   Updated     Checksum
+
+    36263-0002-Codebook.pdf             -       -         -       2016-03-14  9b93a287e01b69d04386f440d9e628cb
+
+    36263-0002-Data.dta                 -       2,181     633     2016-03-14  802af162d54957f0b4d988378cbd39ea
+
+    36263-0002-Data.rda                 -       2,181     633     2016-03-14  cab4fb4878eb82204a439cf0e0c05c95
+
+    36263-0002-Data.sav                 -       2,181     633     2016-03-14  2821fd528a16cef190ce4da11be22def
+
+    36263-0002-Data.stc                 -       2,181     633     2016-03-14  f8652e7894fd584acaaa0266bdfb21cf
+
+    36263-0002-Data.tsv                 -       2,181     633     2016-03-14  5555565efa2a9e7d047ae3089fd7e8c4
+
+    36263-0002-Data.txt                 1282    2,181     633     2016-03-14  7e22e69acdbe8b45b1117fa7b49976af
+
+    36263-0002-Setup.dct                -       -         -       2016-03-14  ee2ec282b0e9e8cfc24f5f8029484780
+
+    36263-0002-Setup.do                 -       -         -       2016-03-14  b38b90989c5fb4bc389e4ee816599d2e
+
+    36263-0002-Setup.sas                -       -         -       2016-03-14  b156d46883c85eef453f48e5688f93c7
+
+    36263-0002-Setup.sps                -       -         -       2016-03-14  040330c6a70e3f7668650c11e535e171
+
+    36263-0002-Supplemental_syntax.do   -       -         -       2016-03-14  dee2aa0762c9b4adfc3d1d26c29d8199
+
+    36263-0002-Supplemental_syntax.sas  -       -         -       2016-03-14  f6bab38334cbe612c942d3e38e3ddd05
+
+
+DS0003 Form 2 Data
+
+    Filename                            Record  Record    Var.    Date        MD5
+                                        Length  Count     Count   Updated     Checksum
+
+    36263-0003-Codebook.pdf             -       -         -       2016-03-14  23dffe12009487ca60d974716ba5cae8
+
+    36263-0003-Data.dta                 -       2,170     328     2015-10-26  85d30c92bb66cf443fdc7954b1782909
+
+    36263-0003-Data.rda                 -       2,170     328     2015-10-26  46b59be18e14ba95c01bcc23beb2c73b
+
+    36263-0003-Data.sav                 -       2,170     328     2015-10-26  176e3c231f0a03a920301ee9c0457e38
+
+    36263-0003-Data.stc                 -       2,170     328     2015-10-26  69e3d203f44d0e0fcc0c4e9319493205
+
+    36263-0003-Data.tsv                 -       2,170     328     2015-10-26  1293a5e41d75cbb9abb731575544e8f6
+
+    36263-0003-Data.txt                 672     2,170     328     2015-10-26  bb87af5191a1ecfee4e07ac0f926786c
+
+    36263-0003-Setup.dct                -       -         -       2015-10-26  8fe30cebd28774e3518761f3b13864dd
+
+    36263-0003-Setup.do                 -       -         -       2015-10-26  0cf79e98da4e396b45436768d7c602fe
+
+    36263-0003-Setup.sas                -       -         -       2015-10-26  54a723a2e9863b8da8bd8419bbfbb72f
+
+    36263-0003-Setup.sps                -       -         -       2015-10-26  ab3e622349f66d2cf33e142c42308128
+
+    36263-0003-Supplemental_syntax.do   -       -         -       2015-10-26  241cc0f1130fe735d8b81a95a1c72d58
+
+    36263-0003-Supplemental_syntax.sas  -       -         -       2015-10-26  c01aaa570ed57f9381d81f93d28496cc
+
+
+DS0004 Form 3 Data
+
+    Filename                            Record  Record    Var.    Date        MD5
+                                        Length  Count     Count   Updated     Checksum
+
+    36263-0004-Codebook.pdf             -       -         -       2016-03-14  1c9e5d29f166093125f49feeb1f33461
+
+    36263-0004-Data.dta                 -       2,169     361     2015-10-26  96043bb19dc504d81bf11497f082de39
+
+    36263-0004-Data.rda                 -       2,169     361     2015-10-26  43bc1683c680801b57177839395ec1c5
+
+    36263-0004-Data.sav                 -       2,169     361     2015-10-26  6320e238ec326e681c739115d9bba0d5
+
+    36263-0004-Data.stc                 -       2,169     361     2015-10-26  6a0f5e858cbb17a583ba07d3fa7b02ff
+
+    36263-0004-Data.tsv                 -       2,169     361     2015-10-26  034fab27ef9c6265c2ed256f99af4ccc
+
+    36263-0004-Data.txt                 738     2,169     361     2015-10-26  c795af733852d3c086cae487d2f05ffc
+
+    36263-0004-Setup.dct                -       -         -       2015-10-26  e0d051c5c3044a19f9f22f5077a855cd
+
+    36263-0004-Setup.do                 -       -         -       2015-10-26  9325f9666f5e76fac663020090a86765
+
+    36263-0004-Setup.sas                -       -         -       2015-10-26  c079166a8df7dc62cf5adc4923b364e6
+
+    36263-0004-Setup.sps                -       -         -       2015-10-26  eb122eefad2ccf8044f7e765372950c0
+
+    36263-0004-Supplemental_syntax.do   -       -         -       2015-10-26  fef05002987397a98c05b233ed69a3f8
+
+    36263-0004-Supplemental_syntax.sas  -       -         -       2015-10-26  18b18ecc0fe739618427b4b95c9d63b9
+
+
+DS0005 Form 4 Data
+
+    Filename                            Record  Record    Var.    Date        MD5
+                                        Length  Count     Count   Updated     Checksum
+
+    36263-0005-Codebook.pdf             -       -         -       2016-03-14  b6d4471248e603b57e21d8ec901da7ae
+
+    36263-0005-Data.dta                 -       2,150     271     2015-10-26  c9d9c44c67b06eaa81eb2f2b6d5ada39
+
+    36263-0005-Data.rda                 -       2,150     271     2015-10-26  fb0dd0848998a444cba256652d5e4740
+
+    36263-0005-Data.sav                 -       2,150     271     2015-10-26  9f7e5bae3b071ea634ee84fc0a94fd84
+
+    36263-0005-Data.stc                 -       2,150     271     2015-10-26  56fd23928b6f585d0985fddfa8a1299c
+
+    36263-0005-Data.tsv                 -       2,150     271     2015-10-26  2fd3960b6911810e59c287925d8bc385
+
+    36263-0005-Data.txt                 558     2,150     271     2015-10-26  56b45816c61ba9031b78e665645d23fc
+
+    36263-0005-Setup.dct                -       -         -       2015-10-26  98a2b38df985e629884e0cd61e7b9697
+
+    36263-0005-Setup.do                 -       -         -       2015-10-26  074a8e7bdec59d764adf71b5f2435df1
+
+    36263-0005-Setup.sas                -       -         -       2015-10-26  a82fcf56286cdd017f08e6fe13f55da2
+
+    36263-0005-Setup.sps                -       -         -       2015-10-26  e09739b9b2706dde886d5733da4a1c8b
+
+    36263-0005-Supplemental_syntax.do   -       -         -       2015-10-26  055027bae14f68feda5f08afe38b7598
+
+    36263-0005-Supplemental_syntax.sas  -       -         -       2015-10-26  86a485c203d42a20c85ab3be1cc4d969
+
+
+DS0006 Form 5 Data
+
+    Filename                            Record  Record    Var.    Date        MD5
+                                        Length  Count     Count   Updated     Checksum
+
+    36263-0006-Codebook.pdf             -       -         -       2016-03-14  acc8a94987f4e8971c0c737bf408417e
+
+    36263-0006-Data.dta                 -       2,157     317     2015-10-26  76189e726dafcc8d7c2fdd62dc83d082
+
+    36263-0006-Data.rda                 -       2,157     317     2015-10-26  1f1a95d6c07b81fa5c834d011cc5202a
+
+    36263-0006-Data.sav                 -       2,157     317     2015-10-26  a26edd909c17603a9296220404999a0e
+
+    36263-0006-Data.stc                 -       2,157     317     2015-10-26  80e409b1a66fe3d6da31177c0178254c
+
+    36263-0006-Data.tsv                 -       2,157     317     2015-10-26  f1d8856f42c59f76dfb53f428b2ee8b2
+
+    36263-0006-Data.txt                 650     2,157     317     2015-10-26  f1302c8cc1e1d1f54c73ae0503e3a5a1
+
+    36263-0006-Setup.dct                -       -         -       2015-10-26  4d6c2b84c383bdbfd3d72c8a69fdddf2
+
+    36263-0006-Setup.do                 -       -         -       2015-10-26  d5f22a36f8ec691e07801b80377ab17f
+
+    36263-0006-Setup.sas                -       -         -       2015-10-26  f6bcc877e3a4de8da655bd0bb4d5cc99
+
+    36263-0006-Setup.sps                -       -         -       2015-10-26  0e45af02abfb5e9fe27cfc19031fe019
+
+    36263-0006-Supplemental_syntax.do   -       -         -       2015-10-26  b5d5f54a1b9703654646604b680b69e9
+
+    36263-0006-Supplemental_syntax.sas  -       -         -       2015-10-26  a4ff467df79c2d6723f1440af8e961de
+
+
+DS0007 Form 6 Data
+
+    Filename                            Record  Record    Var.    Date        MD5
+                                        Length  Count     Count   Updated     Checksum
+
+    36263-0007-Codebook.pdf             -       -         -       2016-03-14  2df1b75a66b55238e84f8341959abec8
+
+    36263-0007-Data.dta                 -       2,188     327     2015-10-26  af197b561beca3dab420780e687cc8da
+
+    36263-0007-Data.rda                 -       2,188     327     2015-10-26  8affe425cd35877da4235acc247710cc
+
+    36263-0007-Data.sav                 -       2,188     327     2015-10-26  ed4d41ca1e423db983fe243845f3d6d2
+
+    36263-0007-Data.stc                 -       2,188     327     2015-10-26  2438e84416a82e99574fbd0bb8df67fb
+
+    36263-0007-Data.tsv                 -       2,188     327     2015-10-26  a7d9d997091ee16442618455cbcac3ec
+
+    36263-0007-Data.txt                 670     2,188     327     2015-10-26  3e062882e450032212a1f51a0f7162cb
+
+    36263-0007-Setup.dct                -       -         -       2015-10-26  cc3be817874b8a14b0ce161e926419e4
+
+    36263-0007-Setup.do                 -       -         -       2015-10-26  a9e217fa715d723252a0b2883fa28729
+
+    36263-0007-Setup.sas                -       -         -       2015-10-26  6a813d490c0e98b30034d754fe3aabbc
+
+    36263-0007-Setup.sps                -       -         -       2015-10-26  625bef8804900dae04befd68c5d736ed
+
+    36263-0007-Supplemental_syntax.do   -       -         -       2015-10-26  3b69f11243cf3e4ccc0df9da93a136ee
+
+    36263-0007-Supplemental_syntax.sas  -       -         -       2015-10-26  7345e1fde7c12fd0366fd6d378f2fa77
+
+
+Version History
+
+2016-03-14 The Principal Investigator supplied 8 additional variables for
+Form 1 (DS0002). These 8 variables are V1102, V1108, V1115, V1116, V1117,
+V1124, V1125, and V1126.

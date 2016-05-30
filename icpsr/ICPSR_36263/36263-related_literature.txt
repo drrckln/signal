@@ -1,0 +1,27 @@
+Bibliography
+Monitoring the Future: A Continuing Study of American Youth (12th-Grade
+Survey), 2014
+
+This bibliography includes published and unpublished works that are related 
+to ICPSR study 36263. It includes works that are based on primary
+or secondary analysis of the data, or which describe or critique those
+data or the collection methodology. This list represents all items known
+to ICPSR as of 2016-05-31.
+
+If you publish a work or know of other works that are based on these data,
+please send the complete citation and name of the ICPSR study used to:
+bibliography@icpsr.umich.edu.
+
+
+1. Holdship, Deborah, "Monitoring the Future." Michigan Today. Jan 21,
+2015, .
+Full text PDF: http://michigantoday.umich.edu/monitoring-the-future/
+
+2. Johnston, L.D.; O’Malley, P.M., Bachman, J.G.;
+Schulenberg, J.E.; Miech, R.A., "Monitoring the Future national survey
+results on
+drug use, 1975–2014: Volume 2, College students
+and adults ages 19–55." Ann Arbor, MI: University of Michigan, Institute
+for
+Social Research, 2015.
+Full text PDF: http://michigantoday.umich.edu/monitoring-the-future/
