@@ -1,0 +1,2 @@
+home advantage replication data.RData (application/x-rlang-transport) 2687174 bytes.
+replication code for olympic home advantage (pettigrew reiche 2016).R (type/x-r-syntax) 12057 bytes.
