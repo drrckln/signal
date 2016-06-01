@@ -1,1 +1,5 @@
 http://jmcauley.ucsd.edu/data/amazon/
+
+try stream_in from jsonlite
+maybe h2o
+or ff
