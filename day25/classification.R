@@ -452,3 +452,4 @@ svm_fit = svm(gender ~ ., data=ndf, kernel="linear", cost = 5)
 plot(svm_fit, pts)
 # tune this to cross validate for cost C
 
+# It seems to do the rest of this assignment I should refactor into reusable functions
