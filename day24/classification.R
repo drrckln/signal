@@ -105,7 +105,6 @@ qda_preds = predict(qda_discr) # accuracy 0.71
 
 accuracy = function(vx, vy) {
   check = unlist(Map(function(x,y) {x == y}, vx, vy))
-  print(check)
   return(sum(check) / length(check))
 }
 
@@ -307,3 +306,63 @@ weights = perceptron(pts, labels, weights, rate=1)
 m = -(weights[[1]]/weights[[2]])
 b = -(weights[[3]]/weights[[2]])
 ggplot(pts) + geom_point(aes(x=X0, y=X1, color=labels)) + geom_abline(slope = m, intercept = b)
+
+
+perceptron_conv = function(xs, y, w, rate) {
+  n = 1
+  classifiction = 0
+  weights = perceptron(xs, y, w, rate)
+  
+  while (accuracy(y, classifiction) != 1) {
+    n = n + 1
+    
+    weights = perceptron(xs, y, weights, rate)
+    m = -(weights[[1]]/weights[[2]])
+    b = -(weights[[3]]/weights[[2]])
+    
+    classifiction = unlist(Map(function(x,y) { sign(y - (m*x + b)) }, xs[,1], xs[,2]))
+    # sanity check bs
+    if (classifiction[1] != y[1]) {
+      classifiction = -classifiction
+    }
+  }
+  print(n)
+  return(weights)
+}
+
+# variation in seeds?
+# 6, 3, 4, 6, 8, 3 iterations (for seeds seq(6))
+# line is jiggling up and down, slope changes a bit as well
+set.seed(5)
+weights = perceptron_conv(pts, labels, rep(1,3), rate=20)
+m = -(weights[[1]]/weights[[2]])
+b = -(weights[[3]]/weights[[2]])
+ggplot(pts) + geom_point(aes(x=X0, y=X1, color=labels)) + geom_abline(slope = m, intercept = b)
+
+# for seed(5),
+# 8, 2, 5, 6, 6 .. ?
+# for rate=seq(5)
+
+# What about 20 data points?
+pts = data.frame()
+for (i in seq(8)) {
+  pt = lin_pair(1.5, 0.2, 1)
+  pts = rbind(pts, pt)
+}
+
+for (i in seq(12)) {
+  pt = lin_pair(1.5, 0.05, -1)
+  pts = rbind(pts, pt)
+}
+
+labels = c(rep(-1, 8), rep(1, 12))
+
+qplot(pts[[1]], pts[[2]], color=labels)
+
+pts = cbind(pts, rep(1, nrow(pts)))
+
+# seed(5), rate=1, data = 20pts: took 9 iterations
+# for 2000pts it took 8 iterations
+# what if I change the rate, seq(5)
+# 9, 12, 8, 8, 8 ... I tried rate=20 and it was still 8 iterations
+# so seems to take longer than if 2000 pts
