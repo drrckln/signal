@@ -258,3 +258,52 @@ ldahist(wine_preds$x[,1], df_wine$Type)
 plot(wine_preds$x[,1],wine_preds$x[,2])
 # ooh, so each vector is the components
 # so it's comparing the weightings and you can see it causes 3 distinct groups?
+
+
+# PERCEPTRONSSSS
+
+pts = data.frame()
+for (i in seq(700)) {
+  pt = lin_pair(1.5, 0.2, 1)
+  pts = rbind(pts, pt)
+}
+
+for (i in seq(300)) {
+  pt = lin_pair(1.5, 0.05, -1)
+  pts = rbind(pts, pt)
+}
+
+plot(pts)
+
+labels = c(rep(-1, 700), rep(1, 300))
+
+qplot(pts[[1]], pts[[2]], color=labels)
+
+pts = cbind(pts, rep(1, nrow(pts)))
+
+dot = function(x, y) {
+  Reduce(`+`, (Map(`*`, x, y)))
+}
+
+perceptron = function(xs, y, w, rate, niter=nrow(xs)) {
+  row_is = sample(seq(niter), size=niter)
+  for (i in row_is) {
+    cand_class = sign(dot(xs[i,], w))
+    if (cand_class != y[i]) {
+      if (cand_class == 1) {
+        w = w - rate*xs[i,]
+      } else {
+        w = w + rate*xs[i,]
+      }
+    }
+  }
+  return(w)
+}
+
+set.seed(5)
+colnames(pts) = c("X0", "X1", "train")
+weights = perceptron(pts, labels, rep(1,3), rate=1)
+weights = perceptron(pts, labels, weights, rate=1)
+m = -(weights[[1]]/weights[[2]])
+b = -(weights[[3]]/weights[[2]])
+ggplot(pts) + geom_point(aes(x=X0, y=X1, color=labels)) + geom_abline(slope = m, intercept = b)
