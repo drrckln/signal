@@ -1,0 +1,41 @@
+"agekdbrn" shouldn't be imputed
+"ballot" irrelevant
+"consent" remove
+cshutyp12" 9 should be NA
+"dateintv" remove
+"eqwlth" 98 should be NA
+"family16"
+"form"
+"formwt"
+"fund" maybe NA should be 9     "fund16"
+"gender1"   "gender2"
+"hefinfo"
+"helpful" 2 and 3 need to be switched
+"hhtype" since "hhtype1"
+"hispanic"
+"id"
+"intage"    "intethn" not sure
+"inthisp"   "intid" remove
+"intrace1"  "intsex" not sure
+"isco88"
+"nummen" above 900 == NA    "numwomen"
+"old1"      "old2"
+"oversamp"
+"partners" 9 should be NA "partnrs5
+"phase"
+"pistol"  3 should be NA
+"polviews" 98 is NA
+"pres12" 9 is NA
+"relate1"   "relate2"  "relhh1"    "relhh2"    "relhhd1"   "relhhd2"
+"res2010"  4 is NA
+"res2012"  9 is NA
+"rifle" 3 is NA
+"sampcode"
+"shotgun" 3 is NA
+"srcbelt" maybe
+"version"
+"vpsu"      "vstrat"
+"worda"     "wordb"    "wordd"     "worde"     "wordf"     "wordg"     "wordi"     "wordj"
+"wtss"      "wtssnr"    "wtssall"
+"year"
+
