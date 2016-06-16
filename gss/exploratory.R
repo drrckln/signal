@@ -20,10 +20,10 @@ scree = function(df) {
 
 # CorrelationMatrix -> Nat -> FactorAnalysis
 # side-effect: corrplot of scores
-factor_analysis = function(c_matrix, num_components) {
-  fa_df = fa(c_matrix, num_components, rotate="oblimin", fm="pa", covar=TRUE)
-  corrplot(fa_df$score.cor)
-  return(fa_df)
+factor_analysis = function(df, num_components, covar=TRUE) {
+  factors = fa(df, num_components, rotate="oblimin", fm="pa", covar=covar)
+  corrplot(factors$score.cor)
+  return(factors)
 }
 
 # Nat -> Loadings -> Keys -> Matrix of [Questions], [Codings]
@@ -48,19 +48,34 @@ eig_cor_matrix = eigen(cm)
 qplot(1:80, eig_cor_matrix$values[order(abs(eig_cor_matrix$values), decreasing=TRUE)][1:80])
 scree_n = 16
 
-factors = factor_analysis(cm, scree_n)
-qplot(1:12, eigen(factors$score.cor))
-
-# the rotation matrix; needed after imputation
-loadings = as.data.frame(factors$loadings[,1:scree_n])
-
-qs = getQuestions(10, loadings, keys)
-qs[,1]
-
 # imputation
 fit = softImpute(as.matrix(df), rank.max=16, lambda = 10, type="svd")
 ndf = as.data.frame(complete(as.matrix(df), fit))
 df = ndf
 
-# scores?
+# re-compute correlation matrix, conduct factor analysis
+cm = scree(df)
+factors = factor_analysis(cm, scree_n) # side-effect: corrplot(factors$score.cor)
+
+# Grab the related questions for the factors
+qs = getQuestions(20, loadings, keys)
+qs[,1]
+
+# the rotation matrix; needed after imputation
+loadings = as.data.frame(factors$loadings[,1:scree_n])
+
+# compute the scores (change of basis)
 scores = as.matrix(df) %*% as.matrix(factors$loadings[,1:scree_n])
+
+
+# write codings
+factor_codings = file("~/repos/signal/gss/factor_codings.txt")
+codings = NULL
+for (c in names(qs[,2])) { codings = c(codings, c, as.character(unlist(qs[,2][c])), "\n") }
+writeLines(codings, con = factor_codings)
+
+factor_questions = file("~/repos/signal/gss/factor_questions.txt")
+questions = NULL
+for (c in names(qs[,1])) { questions = c(questions, c, as.character(unlist(qs[,1][c])), "\n") }
+writeLines(questions, con = factor_questions)
+
