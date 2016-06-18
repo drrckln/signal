@@ -46,7 +46,7 @@ keys = keys[order(keys$X),]
 cm = scree(df)
 eig_cor_matrix = eigen(cm)
 qplot(1:80, eig_cor_matrix$values[order(abs(eig_cor_matrix$values), decreasing=TRUE)][1:80])
-scree_n = 16
+scree_n = 10
 
 # imputation
 fit = softImpute(as.matrix(df), rank.max=16, lambda = 10, type="svd")
@@ -57,12 +57,12 @@ df = ndf
 cm = scree(df)
 factors = factor_analysis(cm, scree_n) # side-effect: corrplot(factors$score.cor)
 
+# the rotation matrix; needed after imputation
+loadings = as.data.frame(factors$loadings[,1:scree_n])
+
 # Grab the related questions for the factors
 qs = getQuestions(20, loadings, keys)
 qs[,1]
-
-# the rotation matrix; needed after imputation
-loadings = as.data.frame(factors$loadings[,1:scree_n])
 
 # compute the scores (change of basis)
 scores = as.matrix(df) %*% as.matrix(factors$loadings[,1:scree_n])
@@ -79,3 +79,4 @@ questions = NULL
 for (c in names(qs[,1])) { questions = c(questions, c, as.character(unlist(qs[,1][c])), "\n") }
 writeLines(questions, con = factor_questions)
 
+# try superlearner later, all unsupervised learning techniques go!
