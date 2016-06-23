@@ -48,20 +48,6 @@ getQuestions = function(n_qs=10, loadings, keys) {
   return(cbind(fact_questions, fact_codings))
 }
 
-powerset = function(s){
-    len = length(s)
-    l = vector(mode="list",length=2^len) ; l[[1]]=numeric()
-    counter = 1L
-    for(x in 1L:length(s)){
-        for(subset in 1L:counter){
-            counter=counter+1L
-            l[[counter]] = c(l[[subset]],s[x])
-        }
-    }
-    return(l)
-}
-
-
 df = read.csv("~/repos/signal/gss/gss.csv")
 #df = df %>% filter(sex == 2)
 keys = read.csv("~/repos/signal/gss/keys.csv")
