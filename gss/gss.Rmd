@@ -27,16 +27,16 @@ knitr::opts_chunk$set(tidy = FALSE, cache.extra = packageVersion('tufte'))
 options(htmltools.dir.version = FALSE)
 
 # DataFrame -> CorrelationMatrix
-scree = function(df) {
-  cor_matrix = cor(df, use="pairwise.complete.obs")
+scree = function(d_f) {
+  cor_matrix = cor(d_f, use="pairwise.complete.obs")
   cor_matrix[is.na(cor_matrix)] = 0
   return(cor_matrix)
 }
 
 # CorrelationMatrix -> Nat -> FactorAnalysis
 # side-effect: corrplot of scores
-factor_analysis = function(df, num_components, covar=TRUE) {
-  factors = fa(df, num_components, rotate="oblimin", fm="pa", covar=covar)
+factor_analysis = function(d_f, num_components, covar=TRUE) {
+  factors = fa(d_f, num_components, rotate="oblimin", fm="pa", covar=covar)
   corrplot(factors$score.cor)
   return(factors)
 }
@@ -48,6 +48,20 @@ getQuestions = function(n_qs=10, loadings, keys) {
   return(cbind(fact_questions, fact_codings))
 }
 
+powerset = function(s){
+    len = length(s)
+    l = vector(mode="list",length=2^len) ; l[[1]]=numeric()
+    counter = 1L
+    for(x in 1L:length(s)){
+        for(subset in 1L:counter){
+            counter=counter+1L
+            l[[counter]] = c(l[[subset]],s[x])
+        }
+    }
+    return(l)
+}
+
+
 df = read.csv("~/repos/signal/gss/gss.csv")
 #df = df %>% filter(sex == 2)
 keys = read.csv("~/repos/signal/gss/keys.csv")
@@ -58,6 +72,7 @@ keys = keys[order(keys$X),]
 # fit = softImpute(as.matrix(df), rank.max=16, lambda = 10, type="svd")
 # ndf = as.data.frame(complete(as.matrix(df), fit))
 # df = ndf
+
 ```
 
 # Introduction
@@ -99,6 +114,12 @@ Wow, freedom of speech is first? I wonder if that differs by subgroups -- maybe 
 # approx equal amounts
 male = df$sex == 1
 female = df$sex == 2
+sexes = list(male, female)
+
+# sexual orientation
+homo = df$sexornt == 1
+bi = df$sexornt == 2
+hetero = df$sexornt == 3
 
 # more of a power law
 protestant = df$relig == 1
@@ -146,6 +167,16 @@ teachers = df$occ10 %in% c(2200, 2300, 2310, 2320, 2330, 2340)
 under_thirty = df$age < 30
 thirty_to_sixty = df$age >= 30 & df$age < 60
 sixty_plus = df$age >= 60
+
+# politics
+strong_democrat = df$partyid == 0
+not_strong_democrat = df$partyid == 1
+ind_near_democrat = df$partyid == 2
+independent = df$partyid == 3
+ind_near_republican = df$partyid == 4
+not_strong_republican = df$partyid == 5
+strong_republican = df$partyid == 6
+other_politics = df$partyid == 7
 ```
 
 ```{r warning = FALSE}
@@ -162,6 +193,73 @@ loadings = as.data.frame(factors$loadings[,1:scree_n])
 
 # compute the scores (change of basis)
 scores = as.matrix(df) %*% as.matrix(factors$loadings[,1:scree_n])
+
+```
+
+Investigate
+
+```{r}
+qplot(scale(scores[,1])) # THAT'S NOT GOOD, breaks assumptions. Confounds.
+
+freedom_questions = c("spkhomo", "libhomo", "librac", "spkrac", "colmslm", "libmslm", "spkmslm", "life", "sprtprsn", "colrac", "comprend", "colcom", "colhomo", "libcom", "spkcom", "libmil", "spkmil", "colmil", "trust") # definitely there are things unrelated to freedom of speech
+
+for (q in freedom_questions) {
+  print(qplot(df[social_scientists, q], xlab=q))
+}
+```
+
+Not very good results, let's try just the civil liberties questions?
+
+```{r}
+civil_liberties_qs = c("spkrac", "libmslm", "spkath", "colath", "libath", "spkcom", "colcom", "libcom", "spkhomo", "colhomo", "libhomo", "spkmil", "colmil", "libmil", "colrac", "librac", "spkmslm", "colmslm")
+
+# let's do some additional cleaning as well
+df$spkrac[df$spkrac == 2] = 0
+df$libmslm[df$libmslm == 2] = 0
+df$spkath[df$spkath == 2] = 0
+df$colath = ifelse(df$colath == 4, 0, ifelse(df$colath == 5, 1, df$colath))
+df$libath[df$libath == 2] = 0
+df$spkcom[df$spkcom == 2] = 0
+df$colcom = ifelse(df$colcom == 5, 0, ifelse(df$colcom == 4, 1, df$colcom))
+df$libcom[df$libcom == 2] = 0
+df$spkhomo[df$spkhomo == 2] = 0
+df$colhomo = ifelse(df$colhomo == 4, 1, ifelse(df$colhomo == 5, 0, df$colhomo))
+df$libhomo[df$libhomo == 2] = 0
+df$spkmil[df$spkmil == 2] = 0
+df$colmil = ifelse(df$colmil == 4, 1, ifelse(df$colmil == 5, 0, df$colmil))
+df$libmil[df$libmil == 2] = 0
+df$colrac = ifelse(df$colrac == 4, 1, ifelse(df$colrac == 5, 0, df$colrac))
+df$librac[df$librac == 2] = 0
+df$spkmslm[df$spkmslm == 2] = 0
+df$colmslm = ifelse(df$colmslm == 4, 1, ifelse(df$colmslm == 5, 0, df$colmslm))
+
+# Re-impute and select only the civil liberties questions
+fit = softImpute(as.matrix(df), rank.max=16, lambda = 10, type="svd")
+ndf = as.data.frame(complete(as.matrix(df), fit))
+cl_df = select(ndf, one_of(civil_liberties_qs))
+keys = keys[keys$X %in% names(cl_df),]
+keys = keys[order(keys$X),]
+
+# re-compute correlation matrix, conduct factor analysis
+cm = scree(cl_df)
+eig_cor_matrix = eigen(cm)
+qplot(1:50, eig_cor_matrix$values[order(abs(eig_cor_matrix$values), decreasing=TRUE)][1:50], ylab = "Eigenvalue") # maybe 9?
+scree_n = 7 # try 1-7
+
+factors = factor_analysis(cm, scree_n) # side-effect: corrplot(factors$score.cor)
+ 
+# the rotation matrix; needed after imputation
+loadings = as.data.frame(factors$loadings[,1:scree_n])
+
+# Grab the related questions for the factors
+qs = getQuestions(5, loadings, keys)
+qs[,1] # doesn't look good
+
+# # compute the scores (change of basis)
+scores = as.matrix(cl_df) %*% as.matrix(factors$loadings[,1:scree_n])
+
+
+# could compute the averages of each factor if aggregated by religion
 ```
 
 
