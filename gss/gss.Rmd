@@ -22,6 +22,7 @@ library("dplyr")
 library("ggplot2")
 library("psych")
 library("softImpute")
+
 # invalidate cache when the tufte version changes
 knitr::opts_chunk$set(tidy = FALSE, cache.extra = packageVersion('tufte'))
 options(htmltools.dir.version = FALSE)
@@ -48,28 +49,24 @@ getQuestions = function(n_qs=10, loadings, keys) {
   return(cbind(fact_questions, fact_codings))
 }
 
+# initial loading
 df = read.csv("~/repos/signal/gss/gss.csv")
-#df = df %>% filter(sex == 2)
 keys = read.csv("~/repos/signal/gss/keys.csv")
 keys = keys[keys$X %in% names(df),]
 keys = keys[order(keys$X),]
-
-# imputation
-# fit = softImpute(as.matrix(df), rank.max=16, lambda = 10, type="svd")
-# ndf = as.data.frame(complete(as.matrix(df), fit))
-# df = ndf
-
 ```
 
-# Introduction
+# The General Social Survey
 
-The [*General Social Survey*](http://gss.norc.org/) is an extremely highly regarded.. monitoring blah blah, conducted face to face blah blah more than 25,000 journal articles, books and other research uses are based on the GSS and over 1,000 have been appearing annually in recent years. Governmental users of the GSS include the Library of Congress, the Departments of Commerce, Defense, Education, and Justice, the Centers for Disease Control and Prevention, and the White House. Newspapers, magazines, and broadcast media in North America, Asia, and Europe frequently cite the GSS.
+The General Social Survey [run out of the National Opinion Research Center at the University of Chicago, and their longest running project] collects data on the demographics, opinions, and behaviors of American society. It is a tremendous/ambitious effort: both sampling and survey methodology are best described as "scrupulous", each respondent is interviewed in-person (rather than simply given a questionnaire to fill out), and every interview requires 90 minutes to administer. [The interview has also been fully translated to and, when appropriate, administered in Spanish.]
 
-As a dataset, it's interesting. Sparse, etc..
+It is accordingly influential -- the most frequently analyzed source of information in the social sciences, save for the US Census. Over 1,000 scholarly publications using the data appear every year. Government, national, and international media frequently cite the GSS. Yet it has garnered little to no attention in the public consciousness. Few would recognize the name. Unobtrusive and unassuming.
 
-One nice way to explore this is with an exploratory factor analysis (in some senses similar to a principal component analysis). Factor analysis is a dimensionality reduction technique -- it tries to "boil down" a high dimensional dataset into a lower dimensional one, with a preset number of "latent" factors.
+# Given a dataset 2014
 
-Doesn't that mean we need some idea of the number of latent factors? Yes, but there are only heuristics. We'll use the amusingly-named scree test here, checking the eigenvalues of the correlation matrix of the dataset:
+Presumably, respondent's answers should be explainable by a smaller number of underlying variables. An unsupervised technique that learns a *latent variable model* is appropriate. Selecting principal component analysis is not incorrect, but exploratory factor analysis is a finer choice. Humans are reasonably well understood already, and the technique allows for oblique axes/rotations.
+
+The downside: the number of latent factors must be chosen up front. We can examine the scree plot[checking the eigenvalues of the correlation matrix]:
 
 ```{r warning = FALSE}
 # Conduct a scree test:
@@ -78,9 +75,17 @@ eig_cor_matrix = eigen(cm)
 qplot(1:50, eig_cor_matrix$values[order(abs(eig_cor_matrix$values), decreasing=TRUE)][1:50], ylab = "Eigenvalue")
 ```
 
+Look closely; the points level off at the 16th factor.
+
 It looks like the elbow is at about.. 16, with most in the first 6. Let's go ahead an conduct a factor analysis. Then for each factor we'll find the questions most loaded for it.
 
-```{r warning = FALSE}
+# Factor Analysis
+
+Factors account for variance. What is the main source of variance in the answers in Americans?
+
+Given Trump, Brexit, and the general hyperpolarization of American politics, "politics" is a natural guess. 
+
+```{r warning = FALSE, echo = FALSE}
 scree_n = 16
 factors = factor_analysis(cm, scree_n) # side-effect: corrplot(factors$score.cor)
 
@@ -92,78 +97,13 @@ qs = getQuestions(20, loadings, keys)
 qs[,1][1:6]
 ```
 
-Wow, freedom of speech is first? I wonder if that differs by subgroups -- maybe gender, political orientation, religion, religiosity, profession, background.
+Wow, freedom of speech is first? I wonder if that differs by subgroups -- maybe gender, race, political orientation, religion, religiosity, profession, background.
 
 ```{r echo = FALSE}
-# let's do some setup
 
-# approx equal amounts
-male = df$sex == 1
-female = df$sex == 2
-sexes = list(male, female)
-
-# sexual orientation
-homo = df$sexornt == 1
-bi = df$sexornt == 2
-hetero = df$sexornt == 3
-
-# more of a power law
-protestant = df$relig == 1
-catholic = df$relig == 2
-jewish = df$relig == 3 #40
-ath_agnostic = df$relig == 4
-other = df$relig == 5 #27
-buddhist = df$relig == 6 #26
-hindu = df$relig == 7 #13
-other_eastern = df$relig == 8 #3
-orthodox_christian = df$relig == 10 #9
-christian = df$relig == 11
-
-# religious intensity. 4 is None
-strong = df$reliten == 1
-not_very_strong = df$reliten == 2
-somewhat_strong = df$reliten == 3
-no_religion = df$reliten == 4
-
-# work in government or private sector
-govt = df$wrkgovt == 1
-private = df$wrkgovt == 2
-
-# self-identified class
-lower_class = df$class == 1
-working_class = df$class == 2
-middle_class = df$class == 3
-upper_class = df$class == 4 #66
-
-# only selected a few
-managers = df$occ10 %in% c(10, 20, 40, 50, 60, 100, 110, 120, 135, 136, 137, 140, 150, 160, 205, 220, 230, 300, 310, 330, 340, 350, 360, 400, 410, 420, 430)
-developers = df$occ10 %in% c(1010, 1020, 1030)
-engineers = df$occ10 %in% c(1320, 1360, 1400, 1410, 1430, 1450, 1460, 1510, 1530)
-scientists = df$occ10 %in% c(1600, 1610, 1640, 1650, 1710, 1720, 1740, 1760)
-social_scientists = df$occ10 %in% c(1800, 1820, 1860)
-lawyers = df$occ10 == 2100
-legal = df$occ10 %in% c(2100, 2105, 2110, 2145, 2160)
-doctors = df$occ10 == 3060
-medical = df$occ10 %in% c(3010, 3030, 3040, 3050, 3060, 3110, 3160, 3200, 3220, 3255, 3258, 3400, 3600, 3310)
-truckers = df$occ10 == 9130
-military = df$occ10 %in% c(9800, 9810, 9820, 9830)
-teachers = df$occ10 %in% c(2200, 2300, 2310, 2320, 2330, 2340)
-
-# age
-under_thirty = df$age < 30
-thirty_to_sixty = df$age >= 30 & df$age < 60
-sixty_plus = df$age >= 60
-
-# politics
-strong_democrat = df$partyid == 0
-not_strong_democrat = df$partyid == 1
-ind_near_democrat = df$partyid == 2
-independent = df$partyid == 3
-ind_near_republican = df$partyid == 4
-not_strong_republican = df$partyid == 5
-strong_republican = df$partyid == 6
-other_politics = df$partyid == 7
 ```
+
+Use an advanced imputation method (read the paper)
 
 ```{r warning = FALSE}
 # imputation
@@ -178,49 +118,56 @@ factors = factor_analysis(cm, scree_n) # side-effect: corrplot(factors$score.cor
 loadings = as.data.frame(factors$loadings[,1:scree_n])
 
 # compute the scores (change of basis)
-scores = as.matrix(df) %*% as.matrix(factors$loadings[,1:scree_n])
+scores = as.matrix(ndf) %*% as.matrix(factors$loadings[,1:scree_n])
 
 ```
 
 Investigate
 
 ```{r}
-qplot(scale(scores[,1])) # THAT'S NOT GOOD, breaks assumptions. Confounds.
-
-freedom_questions = c("spkhomo", "libhomo", "librac", "spkrac", "colmslm", "libmslm", "spkmslm", "life", "sprtprsn", "colrac", "comprend", "colcom", "colhomo", "libcom", "spkcom", "libmil", "spkmil", "colmil", "trust") # definitely there are things unrelated to freedom of speech
-
-for (q in freedom_questions) {
-  print(qplot(df[social_scientists, q], xlab=q))
-}
+# qplot(scale(scores[,1])) # THAT'S NOT GOOD, breaks assumptions. Confounds.
+# 
+# freedom_questions = c("spkhomo", "libhomo", "librac", "spkrac", "colmslm", "libmslm", "spkmslm", "life", "sprtprsn", "colrac", "comprend", "colcom", "colhomo", "libcom", "spkcom", "libmil", "spkmil", "colmil", "trust") # definitely there are things unrelated to freedom of speech
+# 
+# for (q in freedom_questions) {
+#   print(qplot(df[social_scientists, q], xlab=q))
+# }
 ```
 
 Not very good results, let's try just the civil liberties questions?
 
 ```{r}
-civil_liberties_qs = c("spkrac", "libmslm", "spkath", "colath", "libath", "spkcom", "colcom", "libcom", "spkhomo", "colhomo", "libhomo", "spkmil", "colmil", "libmil", "colrac", "librac", "spkmslm", "colmslm")
+# must preserve the ordering in the keys!
+civil_liberties_qs = c("colath", "colcom", "colhomo", "colmil", "colmslm", "colrac",
+                       "libath", "libcom", "libhomo", "libmil", "libmslm", "librac",
+                       "spkath", "spkcom", "spkhomo", "spkmil", "spkmslm", "spkrac")
 
 # let's do some additional cleaning as well
-df$spkrac[df$spkrac == 2] = 0
-df$libmslm[df$libmslm == 2] = 0
-df$spkath[df$spkath == 2] = 0
-df$colath = ifelse(df$colath == 4, 0, ifelse(df$colath == 5, 1, df$colath))
-df$libath[df$libath == 2] = 0
-df$spkcom[df$spkcom == 2] = 0
-df$colcom = ifelse(df$colcom == 5, 0, ifelse(df$colcom == 4, 1, df$colcom))
-df$libcom[df$libcom == 2] = 0
-df$spkhomo[df$spkhomo == 2] = 0
-df$colhomo = ifelse(df$colhomo == 4, 1, ifelse(df$colhomo == 5, 0, df$colhomo))
-df$libhomo[df$libhomo == 2] = 0
-df$spkmil[df$spkmil == 2] = 0
-df$colmil = ifelse(df$colmil == 4, 1, ifelse(df$colmil == 5, 0, df$colmil))
-df$libmil[df$libmil == 2] = 0
-df$colrac = ifelse(df$colrac == 4, 1, ifelse(df$colrac == 5, 0, df$colrac))
-df$librac[df$librac == 2] = 0
-df$spkmslm[df$spkmslm == 2] = 0
-df$colmslm = ifelse(df$colmslm == 4, 1, ifelse(df$colmslm == 5, 0, df$colmslm))
+df = read.csv("~/repos/signal/gss/gss.csv")
+
+df$colath = df$colath - 4
+df$colcom = 5 - df$colcom
+df$colhomo = df$colhomo - 4
+df$colmil = df$colmil - 4
+df$colmslm = df$colmslm - 4
+df$colrac = df$colrac - 4
+
+df$libath = 2 - df$libath
+df$libcom = 2 - df$libcom
+df$libhomo = 2 - df$libhomo
+df$libmil = 2 - df$libmil
+df$libmslm = 2 - df$libmslm
+df$librac = 2 - df$librac
+
+df$spkath = df$spkath - 1
+df$spkcom = df$spkcom - 1
+df$spkhomo = df$spkhomo - 1
+df$spkmil = df$spkmil - 1
+df$spkmslm = df$spkmslm - 1
+df$spkrac = df$spkrac - 1
 
 # Re-impute and select only the civil liberties questions
-fit = softImpute(as.matrix(df), rank.max=16, lambda = 10, type="svd")
+fit = softImpute(as.matrix(df), rank.max=16, lambda = 10, type="svd") # maybe I shouldn't re-impute?
 ndf = as.data.frame(complete(as.matrix(df), fit))
 cl_df = select(ndf, one_of(civil_liberties_qs))
 keys = keys[keys$X %in% names(cl_df),]
@@ -229,221 +176,90 @@ keys = keys[order(keys$X),]
 # re-compute correlation matrix, conduct factor analysis
 cm = scree(cl_df)
 eig_cor_matrix = eigen(cm)
-qplot(1:50, eig_cor_matrix$values[order(abs(eig_cor_matrix$values), decreasing=TRUE)][1:50], ylab = "Eigenvalue") # maybe 9?
-scree_n = 7 # try 1-7
+qplot(1:10, eig_cor_matrix$values[order(abs(eig_cor_matrix$values), decreasing=TRUE)][1:10], ylab = "Eigenvalue") # maybe 9?
+scree_n = 1 # try 1-7
+# 6 is promising, look at how PA4 stands out
 
-factors = factor_analysis(cm, scree_n) # side-effect: corrplot(factors$score.cor)
- 
+factors = fa(cm, 1, covar=TRUE) # side-effect: corrplot(factors$score.cor)
+#corrplot(factors$score.cor) # shows it is 1 factor
+
 # the rotation matrix; needed after imputation
 loadings = as.data.frame(factors$loadings[,1:scree_n])
 
 # Grab the related questions for the factors
-qs = getQuestions(5, loadings, keys)
+qs = getQuestions(10, loadings, keys)
 qs[,1] # doesn't look good
 
 # # compute the scores (change of basis)
 scores = as.matrix(cl_df) %*% as.matrix(factors$loadings[,1:scree_n])
 
+# aggregate by different categories?
+factors$loadings
+ndf = ndf %>% select(relig, sex, sexornt, reliten, class, wrkgovt, partyid)
+ndf = cbind(ndf, scores)
 
-# could compute the averages of each factor if aggregated by religion
+aggregate(ndf, by=ndf["relig"], FUN=mean)
+aggregate(ndf, by=ndf["sex"], FUN=mean)
+aggregate(ndf, by=ndf["reliten"], FUN=mean)
+aggregate(ndf, by=ndf["class"], FUN=mean)
+aggregate(ndf, by=ndf["wrkgovt"], FUN=mean)
+aggregate(ndf, by=ndf["partyid"], FUN=mean)
+# qplot(ndf[managers,"scores"])
+# qplot(ndf[engineers,"scores"])
+# qplot(ndf[scientists,"scores"])
+# qplot(ndf[social_scientists,"scores"])
+# qplot(ndf[lawyers,"scores"])
+# qplot(ndf[legal,"scores"])
+# qplot(ndf[doctors,"scores"])
+# qplot(ndf[medical,"scores"])
+# qplot(ndf[truckers,"scores"])
+# qplot(ndf[military,"scores"])
+# qplot(ndf[teachers,"scores"])
+# qplot(ndf[under_thirty,"scores"])
+# qplot(ndf[thirty_to_sixty,"scores"])
+# qplot(ndf[sixty_plus,"scores"])
+# 
+# mean(ndf[managers,"scores"])
+# mean(ndf[engineers,"scores"])
+# mean(ndf[scientists,"scores"])
+# mean(ndf[social_scientists,"scores"])
+# mean(ndf[lawyers,"scores"], na.rm=TRUE)
+# mean(ndf[legal,"scores"])
+# mean(ndf[doctors,"scores"], na.rm=TRUE)
+# mean(ndf[medical,"scores"])
+# mean(ndf[truckers,"scores"], na.rm=TRUE)
+# mean(ndf[military,"scores"])
+# mean(ndf[teachers,"scores"])
+# mean(ndf[under_thirty,"scores"], na.rm=TRUE)
+# mean(ndf[thirty_to_sixty,"scores"], na.rm=TRUE)
+# mean(ndf[sixty_plus,"scores"], na.rm=TRUE)
+
 ```
-
-
-
-The Tufte handout style is a style that Edward Tufte uses in his books and handouts. Tufte's style is known for its extensive use of sidenotes, tight integration of graphics with text, and well-set typography. This style has been implemented in LaTeX and HTML/CSS^[See Github repositories [tufte-latex](https://github.com/tufte-latex/tufte-latex) and [tufte-css](https://github.com/edwardtufte/tufte-css)], respectively. We have ported both implementations into the [**tufte** package](https://github.com/rstudio/tufte). If you want LaTeX/PDF output, you may use the `tufte_handout` format for handouts, and `tufte_book` for books. For HTML output, use `tufte_html`. These formats can be either specified in the YAML metadata at the beginning of an R Markdown document (see an example below), or passed to the `rmarkdown::render()` function. See @R-rmarkdown more information about **rmarkdown**.
-
-```yaml
----
-title: "An Example Using the Tufte Style"
-author: "John Smith"
-output:
-  tufte::tufte_handout: default
-  tufte::tufte_html: default
----
-```
-
-There are two goals of this package:
-
-1. To produce both PDF and HTML output with similar styles from the same R Markdown document;
-1. To provide simple syntax to write elements of the Tufte style such as side notes and margin figures, e.g. when you want a margin figure, all you need to do is the chunk option `fig.margin = TRUE`, and we will take care of the deails for you, so you never need to think about `\begin{marginfigure} \end{marginfigure}` or `<span class="marginfigure"> </span>`; the LaTeX and HTML code under the hood may be complicated, but you never need to learn or write such code.
-
-If you have any feature requests or find bugs in **tufte**, please do not hesitate to file them to https://github.com/rstudio/tufte/issues. For general questions, you may ask them on StackOverflow: http://stackoverflow.com/tags/rmarkdown.
-
-# Headings
-
-This style provides first and second-level headings (that is, `#` and `##`), demonstrated in the next section. You may get unexpected output if you try to use `###` and smaller headings.
-
-`r newthought('In his later books')`^[[Beautiful Evidence](http://www.edwardtufte.com/tufte/books_be)], Tufte starts each section with a bit of vertical space, a non-indented paragraph, and sets the first few words of the sentence in small caps. To accomplish this using this style, call the `newthought()` function in **tufte** in an _inline R expression_ `` `r ` `` as demonstrated at the beginning of this paragraph.^[Note you should not assume **tufte** has been attached to your R session. You should either `library(tufte)` in your R Markdown document before you call `newthought()`, or use `tufte::newthought()`.]
-
-# Figures
-
-## Margin Figures
-
-Images and graphics play an integral role in Tufte's work. To place figures in the margin you can use the **knitr** chunk option `fig.margin = TRUE`. For example:
-
-```{r fig-margin, fig.margin = TRUE, fig.cap = "MPG vs horsepower, colored by transmission.", fig.width=3.5, fig.height=3.5, cache=TRUE}
-library(ggplot2)
-mtcars2 <- mtcars
-mtcars2$am <- factor(
-  mtcars$am, labels = c('automatic', 'manual')
-)
-ggplot(mtcars2, aes(hp, mpg, color = am)) +
-  geom_point() + geom_smooth() +
-  theme(legend.position = 'bottom')
-```
-
-Note the use of the `fig.cap` chunk option to provide a figure caption. You can adjust the proportions of figures using the `fig.width` and `fig.height` chunk options. These are specified in inches, and will be automatically scaled down to fit within the handout margin.
-
-## Arbitrary Margin Content
-
-In fact, you can include anything in the margin using the **knitr** engine named `marginfigure`. Unlike R code chunks ```` ```{r} ````, you write a chunk starting with ```` ```{marginfigure} ```` instead, then put the content in the chunk. See an example on the right about the first fundamental theorem of calculus.
-
-```{marginfigure}
-We know from _the first fundamental theorem of calculus_ that for $x$ in $[a, b]$:
-$$\frac{d}{dx}\left( \int_{a}^{x} f(u)\,du\right)=f(x).$$
-```
-
-For the sake of portability between LaTeX and HTML, you should keep the margin content as simple as possible (syntax-wise) in the `marginefigure` blocks. You may use simple Markdown syntax like `**bold**` and `_italic_` text, but please refrain from using footnotes, citations, or block-level elements (e.g. blockquotes and lists) there.
-
-## Full Width Figures
-
-You can arrange for figures to span across the entire page by using the chunk option `fig.fullwidth = TRUE`.
-
-```{r fig-fullwidth, fig.width = 10, fig.height = 2, fig.fullwidth = TRUE, fig.cap = "A full width figure.", warning=FALSE, cache=TRUE}
-ggplot(diamonds, aes(carat, price)) + geom_smooth() +
-  facet_grid(~ cut)
-```
-
- Other chunk options related to figures can still be used, such as `fig.width`, `fig.cap`, `out.width`, and so on. For full width figures, usually `fig.width` is large and `fig.height` is small. In the above example, the plot size is $10 \times 2$.
-
-## Main Column Figures
-
-Besides margin and full width figures, you can of course also include figures constrained to the main column. This is the default type of figures in the LaTeX/HTML output.
-
-```{r fig-main, fig.cap = "A figure in the main column.", cache=TRUE}
-ggplot(diamonds, aes(cut, price)) + geom_boxplot()
-```
-
-# Sidenotes
-
-One of the most prominent and distinctive features of this style is the extensive use of sidenotes. There is a wide margin to provide ample room for sidenotes and small figures. Any use of a footnote will automatically be converted to a sidenote. ^[This is a sidenote that was entered using a footnote.] 
-
-If you'd like to place ancillary information in the margin without the sidenote mark (the superscript number), you can use the `margin_note()` function from **tufte** in an inline R expression. `r margin_note("This is a margin note.  Notice that there is no number preceding the note.")` This function does not process the text with Pandoc, so Markdown syntax will not work here. If you need to write anything in Markdown syntax, please use the `marginfigure` block described previously.
-
-# References
-
-References can be displayed as margin notes for HTML output. For example, we can cite R here [@R-base]. To enable this feature, you must set `link-citations: yes` in the YAML metadata, and the version of `pandoc-citeproc` should be at least 0.7.2. You can always install your own version of Pandoc from http://pandoc.org/installing.html if the version is not sufficient. To check the version of `pandoc-citeproc` in your system, you may run this in R:
-
-```{r eval=FALSE}
-system2('pandoc-citeproc', '--version')
-```
-
-If your version of `pandoc-citeproc` is too low, or you did not set `link-citations: yes` in YAML, references in the HTML output will be placed at the end of the output document.
-
-# Tables
-
-You can use the `kable()` function from the **knitr** package to format tables that integrate well with the rest of the Tufte handout style. The table captions are placed in the margin like figures in the HTML output.
 
 ```{r}
-knitr::kable(
-  mtcars[1:6, 1:6], caption = 'A subset of mtcars.'
-)
+qplot(ndf$scores)
+# what's with that huge spike at zero?
+# zeroes = df[ndf$scores == 0,]
+# freespch = as.numeric(ndf$scores == 0)
+# df_fs = cbind(df, freespch)
+# write.csv(df_fs, "~/repos/signal/gss/gss_fs.csv")
+
+
+# dim(zeroes)
+# sum(is.na(zeroes)) / (318 * 277)
+# colSums(is.na(zeroes))
+# 
+# table(zeroes[,"relig"])
+# table(zeroes[,"sex"])
+# table(zeroes[,"sexornt"])
+# table(zeroes[,"reliten"])
+# table(zeroes[,"class"])
+# table(zeroes[,"wrkgovt"])
+# table(zeroes[,"partyid"])
+# table(zeroes[,"age"])
+# 
+# qplot(relig, reliten, data = remove_missing(select(zeroes, relig, reliten)))
+#p = ggplot(data=remove_missing(select(zeroes, relig, reliten)))
+#p + geom_point(x = "relig", y = "reliten")
 ```
 
-# Block Quotes
-
-We know from the Markdown syntax that paragraphs that start with `>` are converted to block quotes. If you want to add a right-aligned footer for the quote, you may use the function `quote_footer()` from **tufte** in an inline R expression. Here is an example:
-
-> "If it weren't for my lawyer, I'd still be in prison. It went a lot faster with two people digging."
->
-> `r tufte::quote_footer('--- Joe Martin')`
-
-Without using `quote_footer()`, it looks like this (the second line is just a normal paragraph):
-
-> "Great people talk about ideas, average people talk about things, and small people talk about wine."
->
-> --- Fran Lebowitz
-
-# Responsiveness
-
-The HTML page is responsive in the sense that when the page width is smaller than 760px, sidenotes and margin notes will be hidden by default. For sidenotes, you can click their numbers (the superscripts) to toggle their visibility. For margin notes, you may click the circled plus signs to toggle visibility.
-
-# More Examples
-
-The rest of this document consists of a few test cases to make sure everything still works well in slightly more complicated scenarios. First we generate two plots in one figure environment with the chunk option `fig.show = 'hold'`:
-
-```{r fig-two-together, fig.cap="Two plots in one figure environment.", fig.show='hold', cache=TRUE}
-p <- ggplot(mtcars2, aes(hp, mpg, color = am)) +
-  geom_point()
-p
-p + geom_smooth()
-```
-
-Then two plots in separate figure environments (the code is identical to the previous code chunk, but the chunk option is the default `fig.show = 'asis'` now):
-
-```{r fig-two-separate, ref.label='fig-two-together', fig.cap=sprintf("Two plots in separate figure environments (the %s plot).", c("first", "second")), cache=TRUE}
-```
-
-You may have noticed that the two figures have different captions, and that is because we used a character vector of length 2 for the chunk option `fig.cap` (something like `fig.cap = c('first plot', 'second plot')`).
-
-Next we show multiple plots in margin figures. Similarly, two plots in the same figure environment in the margin:
-
-```{r fig-margin-together, fig.margin=TRUE, fig.show='hold', fig.cap="Two plots in one figure environment in the margin.", fig.width=3.5, fig.height=2.5, cache=TRUE}
-p
-p + geom_smooth(method = 'lm')
-```
-
-Then two plots from the same code chunk placed in different figure environments:
-
-```{r fig-margin-separate, fig.margin=TRUE, fig.cap=sprintf("Two plots in separate figure environments in the margin (the %s plot).", c("first", "second")), fig.width=3.5, fig.height=2.5, cache=TRUE}
-knitr::kable(head(iris, 15))
-p
-knitr::kable(head(iris, 12))
-p + geom_smooth(method = 'lm')
-knitr::kable(head(iris, 5))
-```
-
-We blended some tables in the above code chunk only as _placeholders_ to make sure there is enough vertical space among the margin figures, otherwise they will be stacked tightly together. For a practical document, you should not insert too many margin figures consecutively and make the margin crowded. 
-
-You do not have to assign captions to figures. We show three figures with no captions below in the margin, in the main column, and in full width, respectively.
-
-```{r fig-nocap-margin, fig.margin=TRUE, fig.width=3.5, fig.height=2, cache=TRUE}
-# a boxplot of weight vs transmission; this figure
-# will be placed in the margin
-ggplot(mtcars2, aes(am, wt)) + geom_boxplot() +
-  coord_flip()
-```
-```{r fig-nocap-main, cache=TRUE}
-# a figure in the main column
-p <- ggplot(mtcars, aes(wt, hp)) + geom_point()
-p
-```
-```{r fig-nocap-fullwidth, fig.fullwidth=TRUE, fig.width=10, fig.height=3, cache=TRUE}
-# a fullwidth figure
-p + geom_smooth(method = 'lm') + facet_grid(~ gear)
-```
-
-# Some Notes on Tufte CSS
-
-There are a few other things in Tufte CSS that we have not mentioned so far. If you prefer `r sans_serif('sans-serif fonts')`, use the function `sans_serif()` in **tufte**. For epigraphs, you may use a pair of underscores to make the paragraph italic in a block quote, e.g.
-
-> _I can win an argument on any topic, against any opponent. People know this, and steer clear of me at parties. Often, as a sign of their great respect, they don't even invite me._
->
-> `r quote_footer('--- Dave Barry')`
-
-We hope you will enjoy the simplicity of R Markdown and this R package, and we sincerely thank the authors of the Tufte-CSS and Tufte-LaTeX projects for developing the beautiful CSS and LaTeX classes. Our **tufte** package would not have been possible without their heavy lifting.
-
-To see the R Markdown source of this example document, you may follow [this link to Github](https://github.com/rstudio/tufte/raw/master/inst/rmarkdown/templates/tufte_html/skeleton/skeleton.Rmd), use the wizard in RStudio IDE (`File -> New File -> R Markdown -> From Template`), or open the Rmd file in the package:
-
-```{r eval=FALSE}
-file.edit(
-  tufte:::template_resources(
-    'tufte_html', '..', 'skeleton', 'skeleton.Rmd'
-  )
-)
-```
-
-```{r bib, include=FALSE}
-# create a bib file for the R packages used in this document
-knitr::write_bib(c('base', 'rmarkdown'), file = 'skeleton.bib')
-```
