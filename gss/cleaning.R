@@ -27,4 +27,6 @@ df$shotgun[df$shotgun == 3] = NA
 
 
 
+
+
 write.csv(df, "~/repos/signal/gss/gss.csv")
